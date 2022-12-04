@@ -1,34 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
+
+const to2numString = (value: number): string => {
+  if (value < 10) return `0${value}`;
+  return `${value}`;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isPlay, setPlay] = useState(false);
+  const [workTimer, setWorkTimer] = useState(0);
+
+  useEffect(() => {
+    let playRef: ReturnType<typeof setInterval> = 0;
+
+    if (isPlay) {
+      playRef = setInterval(() => {
+        setWorkTimer((t) => t + 1);
+      }, 1000);
+    } else {
+      if (playRef) clearInterval(playRef);
+    }
+
+    return () => clearInterval(playRef);
+  }, [isPlay]);
+
+  const hour = Math.floor(workTimer / 3600);
+  const minute = Math.floor((workTimer - hour * 3600) / 60);
+  const second = workTimer - hour * 3600 - minute * 60;
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      {/* <h1>Work Stopwatch</h1> */}
+      <div className="stopwatch">
+        {to2numString(hour)}:{to2numString(minute)}:{to2numString(second)}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button className="play-btn" onClick={() => setPlay(true)}>
+        ▶️ Work
+      </button>
+      {/* <button className="play-btn">▶️ Learn</button>
+      <button className="play-btn">▶️ Play</button> */}
+      <button className="play-btn" onClick={() => setPlay(false)}>
+        ⏸️ Pause
+      </button>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
