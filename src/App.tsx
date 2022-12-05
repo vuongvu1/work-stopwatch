@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import NoSleep from "nosleep.js";
 import "./App.css";
 
-const to2numString = (value: number): string => {
+const noSleep = new NoSleep();
+
+const toNumString = (value: number): string => {
   if (value < 10) return `0${value}`;
   return `${value}`;
 };
@@ -39,6 +42,7 @@ function App() {
   const [isPlay, setPlay] = useState(false);
   const [workTimer, setWorkTimer] = useState(0);
   const [isFullscreen, setFullscreen] = useState(false);
+  const [isAlwaysOn, setAlwaysOn] = useState(false);
 
   useEffect(() => {
     let playRef: ReturnType<typeof setInterval> = 0;
@@ -54,6 +58,11 @@ function App() {
     return () => clearInterval(playRef);
   }, [isPlay]);
 
+  useEffect(() => {
+    if (isAlwaysOn) noSleep.enable();
+    return () => noSleep.disable();
+  }, [isAlwaysOn]);
+
   const hour = Math.floor(workTimer / 3600);
   const minute = Math.floor((workTimer - hour * 3600) / 60);
   const second = workTimer - hour * 3600 - minute * 60;
@@ -62,7 +71,7 @@ function App() {
     <div>
       {/* <h1>Work Stopwatch</h1> */}
       <div className="stopwatch">
-        {to2numString(hour)}:{to2numString(minute)}:{to2numString(second)}
+        {toNumString(hour)}:{toNumString(minute)}:{toNumString(second)}
       </div>
       <button className="play-btn" onClick={() => setPlay((p) => !p)}>
         {isPlay ? "⏸️ Pause" : "▶️ Work"}
@@ -84,6 +93,14 @@ function App() {
         }}
       >
         {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+      </button>
+      <button
+        className="play-btn"
+        onClick={() => {
+          setAlwaysOn((o) => !o);
+        }}
+      >
+        Status: {isAlwaysOn ? "Always On" : "Default"}
       </button>
     </div>
   );
