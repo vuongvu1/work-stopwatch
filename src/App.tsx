@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import NoSleep from "nosleep.js";
 import "./App.css";
+import { useLocalStorage } from "./hooks";
 
 const noSleep = new NoSleep();
 
@@ -11,7 +12,7 @@ const toNumString = (value: number): string => {
 
 function openFullscreen() {
   const element = document.querySelector("body");
-  if (!element) return;
+  if (element == null) return;
 
   element
     .requestFullscreen()
@@ -39,8 +40,9 @@ function exitFullscreen() {
 }
 
 function App() {
+  const [workTimer, setWorkTimer] = useLocalStorage("work-timer", 0);
+
   const [isPlay, setPlay] = useState(false);
-  const [workTimer, setWorkTimer] = useState(0);
   const [isFullscreen, setFullscreen] = useState(false);
   const [isAlwaysOn, setAlwaysOn] = useState(false);
 
@@ -56,7 +58,7 @@ function App() {
     }
 
     return () => clearInterval(playRef);
-  }, [isPlay]);
+  }, [isPlay, setWorkTimer]);
 
   useEffect(() => {
     if (isAlwaysOn) {
@@ -70,8 +72,11 @@ function App() {
   const second = workTimer - hour * 3600 - minute * 60;
 
   const onClickPlay = () => {
-    setPlay((p) => !p);
-    setAlwaysOn(true);
+    setPlay((playStatus) => {
+      const nextStatus = !playStatus;
+      setAlwaysOn(nextStatus);
+      return nextStatus;
+    });
   };
 
   const resetTimer = () => {
