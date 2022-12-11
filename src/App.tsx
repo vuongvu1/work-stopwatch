@@ -59,7 +59,9 @@ function App() {
   }, [isPlay]);
 
   useEffect(() => {
-    if (isAlwaysOn) noSleep.enable();
+    if (isAlwaysOn) {
+      noSleep.enable();
+    }
     return () => noSleep.disable();
   }, [isAlwaysOn]);
 
@@ -67,14 +69,27 @@ function App() {
   const minute = Math.floor((workTimer - hour * 3600) / 60);
   const second = workTimer - hour * 3600 - minute * 60;
 
+  const onClickPlay = () => {
+    setPlay((p) => !p);
+    setAlwaysOn(true);
+  };
+
+  const resetTimer = () => {
+    setPlay(false);
+    setWorkTimer(0);
+  };
+
   return (
     <div>
       {/* <h1>Work Stopwatch</h1> */}
       <div className="stopwatch">
         {toNumString(hour)}:{toNumString(minute)}:{toNumString(second)}
       </div>
-      <button className="play-btn" onClick={() => setPlay((p) => !p)}>
-        {isPlay ? "⏸️ Pause" : "▶️ Work"}
+      <button className="play-btn" onClick={onClickPlay}>
+        {isPlay ? "⏸️" : "▶️"} Work
+      </button>
+      <button className="play-btn" onClick={resetTimer}>
+        Reset
       </button>
       {/* <button className="play-btn">▶️ Learn</button>
       <button className="play-btn">▶️ Play</button> */}
@@ -94,13 +109,8 @@ function App() {
       >
         {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
       </button>
-      <button
-        className="play-btn"
-        onClick={() => {
-          setAlwaysOn((o) => !o);
-        }}
-      >
-        Status: {isAlwaysOn ? "Always On" : "Default"}
+      <button className="play-btn" onClick={() => setAlwaysOn((o) => !o)}>
+        Keep screen on: <strong>{isAlwaysOn ? "Enable" : "Disable"}</strong>
       </button>
     </div>
   );
