@@ -91,7 +91,7 @@ function App() {
         {toNumString(hour)}:{toNumString(minute)}:{toNumString(second)}
       </div>
       <button className="play-btn" onClick={onClickPlay}>
-        {isPlay ? "⏸️" : "▶️"} Work
+        {isPlay ? "Working" : "Start"}
       </button>
       <button className="play-btn" onClick={resetTimer}>
         Reset
